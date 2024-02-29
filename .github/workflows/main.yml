@@ -1,22 +1,52 @@
-name: Deploy to Docker Hub
+#yaml file
+name: 'Terraform'
 
 on:
   push:
-    branches:
-      - main
+    branches: [ "main" ]
+  pull_request:
+
+permissions:
+  contents: read
 
 jobs:
-  deploy:
+  terraform:
+    name: 'Terraform'
     runs-on: ubuntu-latest
+    environment: production
+    defaults:
+      run:
+        shell: bash
+        working-directory: ./infrastructure
 
     steps:
-    - name: Check out the code
-      uses: actions/checkout@v2
+    - name: Checkout
+      uses: actions/checkout@v3
 
-    - name: Log in to Docker Hub
-      run: docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
-
-    - name: Build and push Docker image
+    - name: Setup AWS credentials
       run: |
-        docker build -t mohd1995/webhosting:latest .
-        docker push mohd1995/webhosting:latest
+        mkdir -p ~/.aws
+        echo "[default]" > ~/.aws/credentials
+        echo "aws_access_key_id=${{ secrets.AWS_ACCESS_KEY_ID }}" >> ~/.aws/credentials 
+        echo "aws_secret_access_key=${{ secrets.AWS_SECRET_ACCESS_KEY }}" >> ~/.aws/credentials
+
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v1
+      with:
+        aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+    - name: Terraform Init
+      run: terraform init
+
+    - name: Terraform Apply
+      if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+      run: terraform apply -auto-approve
+
+    - name: Delay for 2 minutes
+      run: sleep 360  
+
+    - name: Terraform Des atroy
+      if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+      run: terraform destroy -auto-approve
+

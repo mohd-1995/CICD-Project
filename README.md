@@ -9,7 +9,8 @@ a
 |   `-- workflows
 |       `-- main.yml          # GitHub Actions workflow definition
 |-- infrastructure
-|   `-- terraform
+        |--terraform 
+            |-- .terraform.lock.hcl
 |       |-- main.tf           # Terraform configuration for AWS infrastructure
 |       |-- variables.tf      # Terraform variable definitions
 |       `-- outputs.tf        # Terraform output definitions
