@@ -1,4 +1,4 @@
-name: CI/CD Pipeline with Docker, Codacy, and Terraform
+name: CI/CD Pipeline with Docker, and Terraform
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
 
 jobs:
   build-and-push:
-    runs-on: ubuntu-latest
+    runs-on: linux-latest
     steps:
       - name: Check out the code
         uses: actions/checkout@v2
