@@ -1,60 +1,51 @@
-name: CI/CD Pipeline with Docker, and Terraform
+name: 'Terraform'
 
 on:
   push:
-    branches:
-      - main
+    branches: [ "main" ]
+  pull_request:
+
+permissions:
+  contents: read
 
 jobs:
-  build-and-push:
+  terraform:
+    name: 'Terraform'
     runs-on: ubuntu-latest
+    environment: production
+
+    defaults:
+      run:
+        shell: bash
+
     steps:
-      - name: Check out the code
-        uses: actions/checkout@v2
+    - name: Checkout
+      uses: actions/checkout@v3
 
-      - name: Log in to Docker Hub
-        run: docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+    - name: Setup AWS credentials
+      run: |
+        mkdir -p ~/.aws
+        echo "[default]" > ~/.aws/credentials
+        echo "aws_access_key_id=${{ secrets.AWS_ACCESS_KEY_ID }}" >> ~/.aws/credentials 
+        echo "aws_secret_access_key=${{ secrets.AWS_SECRET_ACCESS_KEY }}" >> ~/.aws/credentials
 
-      - name: Build and push Docker image
-        run: |
-          docker build -t mohd1995/webhosting:latest .
-          docker push  mohd1995/webhosting
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v1
+      with:
+        backend_config: "region=${{ secrets.AWS_REGION }}"  # Add the appropriate backend configuration
+        aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
-  terraform-deploy:
-    needs: build-and-push
-    runs-on: ubuntu-latest
-    steps:
-      - name: Check out the code
-        uses: actions/checkout@v2
+    - name: Terraform Init
+      run: terraform init
 
-      - name: Set up Terraform
-        uses: hashicorp/setup-terraform@v1
-        with:
-          terraform_version: latest
+    - name: Terraform Apply
+      if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+      run: terraform apply -auto-approve
 
-      - name: Terraform Init
-        run: terraform init
-        working-directory: ./infrastructure/terraform
+    - name: Delay for 2 minutes
+      run: sleep 120  # sleep for 2 minutes
 
-      - name: Terraform Plan
-        run: terraform plan
-        working-directory: ./infrastructure/terraform
-
-      - name: Terraform Apply
-        run: terraform apply -auto-approve
-        working-directory: ./infrastructure/terraform
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-      
-      - name: Wait 3 minutes
-        uses: actions/wait-for-check@v2
-        with:
-          timeoutSeconds: 180 # Waits for 3 minutes
-
-      - name: Terraform Destroy
-        run: terraform destroy -auto-approve
-        working-directory: ./infrastructure/terraform
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+    - name: Terraform Destroy
+      if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+      run: terraform destroy -auto-approve
