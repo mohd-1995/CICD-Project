@@ -1,3 +1,4 @@
+#creating a security group
 resource "aws_security_group" "lb" {
   description = "Security Group for load balancer"
   vpc_id      = aws_vpc.vpc.id
