@@ -1,4 +1,4 @@
-# Use the Nginx image from Docker Hub
+# Uses the Nginx image from Docker Hub
 FROM nginx:alpine
 
 # Copy the static content (HTML and CSS files) into the Nginx image
