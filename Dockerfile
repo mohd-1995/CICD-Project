@@ -2,10 +2,10 @@
 FROM nginx:alpine
 
 # Copy the static content (HTML and CSS files) into the Nginx image
-COPY index.html /usr/share/nginx/html/
-COPY index.css /usr/share/nginx/html/
+COPY index.html /usr/share/nginx/src/
+COPY index.css /usr/share/nginx/src/
 # Corrected the path for the image directory
-COPY images/me.jpg /usr/share/nginx/html/images/
+COPY images/me.jpg /usr/share/nginx/src/images/
 
 # Expose port 80
 EXPOSE 80
