@@ -20,26 +20,6 @@ jobs:
           docker build -t mohd1995/webhosting:latest .
           docker push  mohd1995/webhosting
 
-
-      - name: Codacy Analysis
-        uses: codacy/codacy-analysis-cli-action@master
-        with:
-          project-token: ${{ secrets.CODACY_PROJECT_TOKEN }}
-          upload: true
-          gh-code-scanning-compat: true
-        # Assuming the output can be redirected or saved, update this part accordingly
-        # It may require custom scripting if the action doesn't support log output directly
-
-      # New step to upload the analysis logs to S3
-      - name: Upload Codacy logs to S3
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        run: |
-          # Assuming logs are saved to a file named codacy-analysis.log
-          # Update the file path and bucket name as necessary
-          aws s3 cp codacy-analysis.log s3://codacy-result/path/to/logs/codacy-analysis-$(date +%Y-%m-%d-%H-%M-%S).log
-
   terraform-deploy:
     needs: build-and-push
     runs-on: ubuntu-latest
