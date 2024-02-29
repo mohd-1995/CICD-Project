@@ -1,13 +1,12 @@
 # Uses the Nginx image from Docker Hub
 FROM nginx:alpine
 
-# Copy the static content (HTML and CSS files) into the Nginx image
-COPY index.html /usr/share/nginx/html/src
-COPY index.css /usr/share/nginx/html/src
-# Corrected the path for the image directory
-COPY images/me.jpg /usr/share/nginx/html/src/images/
+COPY src/index.html /usr/share/nginx/html/
+COPY src/index.css /usr/share/nginx/html/
 
-# Expose port 80
+COPY src/images/ /usr/share/nginx/html/images/
+
+# Exposing port 80
 EXPOSE 80
 
 # Start Nginx when the container has provisioned
