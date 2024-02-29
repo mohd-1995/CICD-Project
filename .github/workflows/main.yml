@@ -18,7 +18,8 @@ jobs:
       - name: Build and push Docker image
         run: |
           docker build -t mohd1995/webhosting:latest .
-          docker push mohd1995/webhosting:latest
+          docker push  mohd1995/webhosting
+
 
       - name: Codacy Analysis
         uses: codacy/codacy-analysis-cli-action@master
