@@ -16,7 +16,7 @@ jobs:
     defaults:
       run:
         shell: bash
-        working-directory: terraform
+        working-directory: ./infrastructure
 
     steps:
     - name: Checkout
@@ -46,6 +46,6 @@ jobs:
     - name: Delay for 2 minutes
       run: sleep 360  
 
-    - name: Terraform Destroy
+    - name: Terraform Des atroy
       if: github.ref == 'refs/heads/main' && github.event_name == 'push'
       run: terraform destroy -auto-approve
