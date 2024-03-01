@@ -1,10 +1,10 @@
 resource "aws_launch_configuration" "web" {
   name          = "web-launch-config"
-  image_id      = "ami-0e5f882be1900e43b"
+  image_id      = "ami-0d18e50ca22537278"
   instance_type = "t2.micro"
   security_groups = [aws_security_group.ec2.id]
   key_name = "testing2"
-  user_data = file("user-data.sh") # Ensure you have this script
+  user_data = file("user-data.sh")
   
   lifecycle {
     create_before_destroy = true
@@ -18,24 +18,9 @@ resource "aws_autoscaling_group" "web" {
   max_size             = 2
   desired_capacity     = 1
 
-   instance_refresh {
-    strategy = "Rolling"
-    preferences {
-      min_healthy_percentage = 50
-    }
-    triggers = ["tag"]
+  lifecycle {
+    create_before_destroy = true
   }
-
-
-  enabled_metrics = [
-    "GroupMinSize",
-    "GroupMaxSize",
-    "GroupDesiredCapacity",
-    "GroupInServiceInstances",
-    "GroupTotalInstances"
-  ]
-metrics_granularity = "1Minute"
-
 
   tag {
     key                 = "Name"
