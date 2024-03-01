@@ -1,43 +1,30 @@
-name: 'Terraform'
+name: deployment-workflow
 
-on:
-  push:
-    branches: [ "main" ]
-  pull_request:
-
-permissions:
-  contents: read
-
+on: push
 jobs:
-  terraform:
-    name: 'Terraform'
+  terraform_apply:
     runs-on: ubuntu-latest
-    environment: production
-    defaults:
-      run:
-        shell: bash
-        working-directory: ./infrastructure
-
     steps:
-    - name: Checkout
-      uses: actions/checkout@v3
+    - uses: actions/checkout@v1
 
-    - name: Setup AWS credentials
-      uses: aws-actions/configure-aws-credentials@v1
-      with:
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: eu-west-2
 
-    - name: Setup Terraform
-      uses: hashicorp/setup-terraform@v1
+    - name: Verify Terraform version
+      run: terraform --version
 
-    - name: Terraform Init
-      run: terraform init
+    - name: Terraform init
+      env:
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      run: terraform -chdir="./infrastructure" init -input=false
 
-    - name: Terraform Apply
-      if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-      run: terraform apply -auto-approve
+    - name: Terraform validation
+      run: terraform -chdir="./terrafinfrastructureorm" validate -no-color
+
+    - name: Terraform apply
+      env:
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      run: terraform -chdir="./infrastructure" apply -auto-approve -input=false 
 
     # Optional: Delay before destroy (if needed for testing/verification purposes)
     - name: Delay for 2 minutes
@@ -46,3 +33,6 @@ jobs:
     - name: Terraform Destroy
       if: github.ref == 'refs/heads/main' && github.event_name == 'push'
       run: terraform destroy -auto-approve
+
+
+
