@@ -18,7 +18,7 @@ jobs:
       run: terraform -chdir="./infrastructure" init -input=false
 
     - name: Terraform validation
-      run: terraform -chdir="./terrafinfrastructureorm" validate -no-color
+      run: terraform -chdir="./infrastructure" validate -no-color
 
     - name: Terraform apply
       env:
