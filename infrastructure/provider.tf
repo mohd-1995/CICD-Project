@@ -4,7 +4,7 @@ provider "aws" {
 
 terraform {
   backend "s3" {
-    bucket = "codacy-analysis-result-bucket"
+    bucket = "moes-codepipeline-bucket"
     key = "testing2.pem"
     region = "eu-west-2"
   }
