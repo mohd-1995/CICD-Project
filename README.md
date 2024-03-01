@@ -4,7 +4,7 @@ This repository is used to store code to launch my portfolio website using AWS i
 a
 
 #my-directory
-/
+inside CICD-Project
 |-- .github
 |   `-- workflows
 |       `-- main.yml          # GitHub Actions workflow definition
