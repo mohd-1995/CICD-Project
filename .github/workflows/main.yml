@@ -28,15 +28,15 @@ jobs:
 
       - name: Terraform Init
         run: terraform init
-        working-directory: ./infrastructure/terraform
+        working-directory: ./infrastructure
 
       - name: Terraform Validate
         run: terraform validate
-        working-directory: ./infrastructure/terraform
+        working-directory: ./infrastructure
 
       - name: Terraform Plan
         run: terraform plan
-        working-directory: ./infrastructure/terraform
+        working-directory: ./infrastructure
 
       - name: Terraform Apply
         run: terraform apply -auto-approve
