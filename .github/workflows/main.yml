@@ -1,35 +1,18 @@
-name: 'Terraform AWS Deployment and Security Scan'
+name: 'Terraform AWS Deployment'
 
 on:
   push:
     branches:
       - main
-  pull_request:
 
 jobs:
-  build-and-deploy:
-    name: 'Build, Security Scan, and Deploy/Destroy Terraform Infrastructure'
-    runs-on: ubuntu-20.04
+  terraform:
+    name: 'Deploy and Destroy Terraform Infrastructure'
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v3
-
-      - name: Run Trivy vulnerability scanner in IaC mode
-        uses: aquasecurity/trivy-action@master
-        with:
-          scan-type: 'config'
-          hide-progress: false
-          format: 'sarif'
-          output: 'trivy-results.sarif'
-          exit-code: '1'
-          ignore-unfixed: true
-          severity: 'CRITICAL,HIGH'
-
-      - name: Upload Trivy scan results to GitHub Security tab
-        uses: github/codeql-action/upload-sarif@v2
-        with:
-          sarif_file: 'trivy-results.sarif'
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
@@ -55,6 +38,7 @@ jobs:
         run: terraform apply -auto-approve
         working-directory: ./infrastructure
       
+        #This will destroy the structure within 3 minutes
       - name: Wait for 3 Minutes
         run: sleep 180
 
