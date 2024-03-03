@@ -7,7 +7,7 @@ on:
 
 jobs:
   terraform:
-    name: 'Deploy and Destroy Terraform Infrastructure'
+    name: 'Build, Security Scan and Deploy/Destroy Terraform Infrastructure'
     runs-on: ubuntu-latest
 
     steps:
@@ -20,6 +20,22 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: eu-west-2
+      
+      - name: Run Trivy vulnerability Scanner in IaC
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'config'
+          hide-progress: false
+          format: 'sarif'
+          output: 'trivy-results.sarif'
+          exit-code: '1'
+          ignore-unfixed: true
+          severity: 'CRITICAL, HIGH'
+      
+      - name: Upload Trivy scan results to Github Se
+        uses: github/codeql-action/upload-sarif@v2
+        with:
+          sarif_file: 'trivy-result.sarif'
 
       - name: Set up Terraform
         uses: hashicorp/setup-terraform@v1
