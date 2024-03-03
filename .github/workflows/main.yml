@@ -3,7 +3,7 @@ name: 'Terraform AWS Deployment'
 on:
   push:
     branches:
-      - main #try now
+      - main
 
 jobs:
   terraform:
@@ -38,3 +38,4 @@ jobs:
       - name: Terraform Apply
         run: terraform apply -auto-approve
 
+    working-directory: ./infrastructure
