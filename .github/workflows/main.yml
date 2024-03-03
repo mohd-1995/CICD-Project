@@ -7,7 +7,7 @@ on:
 
 jobs:
   terraform:
-    name: 'Deploy Terraform Infrastructure'
+    name: 'Deploy and Destroy Terraform Infrastructure'
     runs-on: ubuntu-latest
 
     steps:
@@ -40,4 +40,11 @@ jobs:
 
       - name: Terraform Apply
         run: terraform apply -auto-approve
+        working-directory: ./infrastructure
+
+      - name: Wait for 3 Minutes
+        run: sleep 180
+
+      - name: Terraform Destroy
+        run: terraform destroy -auto-approve
         working-directory: ./infrastructure
