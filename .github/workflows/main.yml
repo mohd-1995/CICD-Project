@@ -22,7 +22,6 @@ jobs:
           exit-code: '1'
           ignore-unfixed: true
           severity: 'CRITICAL,HIGH'
-          source: './infrastructure'
 
       - name: Upload Trivy scan results to GitHub Security tab
         uses: github/codeql-action/upload-sarif@v2
