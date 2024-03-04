@@ -17,6 +17,7 @@ jobs:
         with:
           scan-type: 'fs'
           ignore-unfixed: true
+          token: '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'
           format: 'sarif'
           output: 'trivy-results.sarif'
           severity: 'CRITICAL'
