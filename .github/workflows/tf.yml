@@ -1,4 +1,6 @@
-name: 'CI with Trivy Scan and S3 Upload'
+permissions: write-all
+
+name: 'Build and Deploy with Pre-Deployment Security Scan'
 
 on:
   push:
@@ -7,28 +9,29 @@ on:
   pull_request:
 
 jobs:
-  trivy_scan_and_upload:
-    runs-on: ubuntu-latest
+  build-and-deploy:
+    name: 'Build, Security Scan, and Deploy Terraform Infrastructure'
+    runs-on: ubuntu-20.04
+
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
-      - name: Configure AWS credentials
+      - name: Run Trivy vulnerability scanner in fs mode
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'fs'
+          scan-ref: '.'
+          trivy-config: trivy.yaml
+
+      - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: eu-west-2
+      
 
-      - name: Install Trivy
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y trivy
 
-      - name: Run Trivy vulnerability scanner
-        run: |
-          trivy filesystem --format json -o trivy-results.json .
 
-      - name: Upload Trivy scan results to S3
-        run: |
-          aws s3 cp trivy-results.json s3://git-mo-aws/trivy-results-${{ github.run_id }}.json
+
