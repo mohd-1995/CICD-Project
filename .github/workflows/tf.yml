@@ -46,3 +46,27 @@ jobs:
       - name: Upload Trivy scan results to S3
         run: |
           aws s3 cp trivy-results.log s3://git-mo-aws/trivy-results-${{ github.run_id }}.json
+      
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v1
+        with:
+          terraform_version: 1.6.2
+
+      - name: Terraform Init
+        run: terraform init
+        working-directory: ./infrastructure
+
+      - name: Terraform Validate
+        run: terraform validate
+        working-directory: ./infrastructure
+
+      - name: Terraform Apply
+        run: terraform apply -auto-approve
+        working-directory: ./infrastructure
+
+      - name: Wait for 3 Minutes
+        run: sleep 180
+
+      - name: Terraform Destroy
+        run: terraform destroy -auto-approve
+        working-directory: ./infrastructure
