@@ -28,7 +28,7 @@ jobs:
 
       - name: Run Trivy vulnerability scanner on filesystem and save output
         run: |
-          trivy filesystem --format json . > trivy-results.json
+          trivy filesystem . > trivy-results.log
           
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
