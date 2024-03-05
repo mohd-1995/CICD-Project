@@ -45,9 +45,16 @@ jobs:
       - name: Terraform Apply
         run: terraform apply -auto-approve
         working-directory: ./infrastructure
+      
+      - name: Save Trivy Scan Result
+        run: trivy filesystem --format json --output trivy_scan_results.json .
+        working-directory: ./infrastructure
 
-      - name: Wait for 3 Minutes
-        run: sleep 180
+      - name: Upload Trivy Scan Results to S3
+        run: aws S3 cp trivy_scan_results.json s3://codacy-result/${{ github.run_id }}/trivy_scan_results.json
+
+      - name: Wait for 5 Minutes
+        run: sleep 600
 
       - name: Terraform Destroy
         run: terraform destroy -auto-approve
