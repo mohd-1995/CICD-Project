@@ -25,7 +25,7 @@ jobs:
           output: 'trivy-results.json'
       
       - name: Upload Trivy scan results to S3
-        run: aws s3 cp trivy-results.json s3://git-mo-aws/>/trivy/trivy-results.json
+        run: aws s3 cp trivy-results.json s3://git-mo-aws/trivy/trivy-results.json
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
