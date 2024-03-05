@@ -10,18 +10,12 @@ on:
 
 jobs:
   build-and-deploy:
+    name: 'Build, Security Scan, and Deploy Terraform Infrastructure'
     runs-on: ubuntu-20.04
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
-      
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: eu-west-2
 
       - name: Install Trivy
         run: |
@@ -32,14 +26,17 @@ jobs:
           sudo apt-get update
           sudo apt-get install trivy
 
-      - name: Run Trivy vulnerability scanner and save output
+      - name: Run Trivy vulnerability scanner on filesystem and save output
         run: |
           trivy filesystem --format json . > trivy-results.json
+          
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: eu-west-2
 
       - name: Upload Trivy scan results to S3
         run: |
-          aws s3 cp trivy-results.json s3://git-mo-aws/trivy-results-${{ github.run_id }}.json
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_DEFAULT_REGION: eu-west-2
+          aws s3 cp trivy-results.json s3://your-s3-bucket-name/trivy-results-${{ github.run_id }}.json
