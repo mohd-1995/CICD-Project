@@ -28,7 +28,14 @@ jobs:
       - name: Run Trivy vulnerability scanner on filesystem and save output
         run: |
           trivy filesystem . > trivy-results.log
-          
+      
+      - name: Run Trivy Vulnerability scanner in fs mode
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'fs'
+          scan-ref: '.'
+          trivy-config: tf.yml
+
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
