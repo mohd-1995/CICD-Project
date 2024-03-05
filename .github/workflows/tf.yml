@@ -46,7 +46,7 @@ jobs:
       - name: Upload Trivy scan results to S3
         run: |
           aws s3 cp trivy-results.log s3://git-mo-aws/trivy-results-${{ github.run_id }}.json
-      
+      ##trivy in json format to my S3 buckets
       - name: Set up Terraform
         uses: hashicorp/setup-terraform@v1
         with:
