@@ -39,4 +39,4 @@ jobs:
 
       - name: Upload Trivy scan results to S3
         run: |
-          aws s3 cp trivy-results.json s3://git-mo-aws/trivy-results-${{ github.run_id }}.json
+          aws s3 cp trivy-results.log s3://git-mo-aws/trivy-results-${{ github.run_id }}.json
