@@ -14,7 +14,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Run Trivy vulnerability scanner in IaC mode
+      - name: Run Trivy vulnerability/Security scanner in IaC mode
         uses: aquasecurity/trivy-action@master
         with:
           scan-type: 'config'
