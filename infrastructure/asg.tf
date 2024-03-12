@@ -1,9 +1,9 @@
 resource "aws_launch_configuration" "web" {
-  name          = "web-launch-config"
+  name          = "web-launch-configuration"
   image_id      = "ami-0d18e50ca22537278"
   instance_type = "t2.micro"
   security_groups = [aws_security_group.ec2.id]
-  key_name = "testing2"
+  key_name = "new-2024"
   user_data = file("user-data.sh")
   
   lifecycle {
