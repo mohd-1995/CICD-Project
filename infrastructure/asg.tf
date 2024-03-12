@@ -1,6 +1,6 @@
 resource "aws_launch_configuration" "web" {
-  name          = "web-launch-configuration"
-  image_id      = "ami-0d18e50ca22537278"
+  name_prefix   = "web-launch-"
+  image_id      = "ami-09d6bbc1af02c2ca1"
   instance_type = "t2.micro"
   security_groups = [aws_security_group.ec2.id]
   key_name = "new-2024"
@@ -12,6 +12,7 @@ resource "aws_launch_configuration" "web" {
 }
 
 resource "aws_autoscaling_group" "web" {
+  name = "${aws_launch_configuration.web.name}-asg"
   launch_configuration = aws_launch_configuration.web.id
   vpc_zone_identifier  = [ aws_subnet.s1.id, aws_subnet.s2.id ]
   min_size             = 1

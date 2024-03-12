@@ -70,10 +70,10 @@ resource "aws_cloudwatch_log_group" "vpc" {
 }
 
 resource "aws_flow_log" "vpc_flow" {
-  iam_role_arn = aws_iam_role.vpc_flow_logs_role.arn
+  iam_role_arn    = aws_iam_role.vpc_flow_logs_role.arn
   log_destination = aws_cloudwatch_log_group.vpc.arn
-  traffic_type = "ALL"
-  vpc_id = aws_vpc.vpc.id
+  traffic_type    = "ALL"
+  vpc_id          = aws_vpc.vpc.id
 }
 
 
@@ -95,8 +95,8 @@ resource "aws_iam_role" "vpc_flow_logs_role" {
 }
 
 resource "aws_iam_role_policy" "vpc_flow_logs_policy" {
-  name   = "vpc_flow_logs_policy"
-  role   = aws_iam_role.vpc_flow_logs_role.id
+  name = "vpc_flow_logs_policy"
+  role = aws_iam_role.vpc_flow_logs_role.id
   policy = jsonencode({
     Version = "2012-10-17"
     Statement = [

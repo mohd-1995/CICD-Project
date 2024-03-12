@@ -1,11 +1,11 @@
 resource "aws_lb" "lb" {
-  name               = "my-lb"
-  internal           = false
-  load_balancer_type = "application"
-  security_groups    = [aws_security_group.lb.id]
-  subnets            = [ aws_subnet.s1.id, aws_subnet.s2.id]
+  name                             = "my-lb"
+  internal                         = false
+  load_balancer_type               = "application"
+  security_groups                  = [aws_security_group.lb.id]
+  subnets                          = [aws_subnet.s1.id, aws_subnet.s2.id]
   enable_cross_zone_load_balancing = true
-  ip_address_type = "ipv4"
+  ip_address_type                  = "ipv4"
 }
 
 resource "aws_lb_target_group" "tg" {
@@ -22,7 +22,7 @@ resource "aws_lb_target_group" "tg" {
     protocol            = "HTTP"
     healthy_threshold   = 3
     unhealthy_threshold = 2
-    timeout             = 3 
+    timeout             = 3
     matcher             = "200"
   }
 }

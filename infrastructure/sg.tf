@@ -8,7 +8,7 @@ resource "aws_security_group" "lb" {
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
-   
+
   ingress {
     from_port   = 443
     to_port     = 443
@@ -33,25 +33,25 @@ resource "aws_security_group" "ec2" {
   # Assuming your application listens on port 80
   ingress {
     #changed to 8080 from 80
-    from_port   = 80
-    to_port     = 80
-    protocol    = "tcp"
+    from_port       = 80
+    to_port         = 80
+    protocol        = "tcp"
     security_groups = [aws_security_group.lb.id]
   }
 
   #added 443 inr order to pull docker image out of dockerhub
   ingress {
-    from_port = 443
-    to_port = 443
-    protocol = "tcp"
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
 
-#added to SSH into the ec2 instance
+  #added to SSH into the ec2 instance
   ingress {
-    from_port = 22
-    to_port = 22
-    protocol = "tcp"
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
 
