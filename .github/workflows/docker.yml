@@ -19,5 +19,5 @@ jobs:
 
     - name: Build and push Docker image
       run: |
-        docker build -t mohd1995/webhosting:latest .
-        docker push mohd1995/webhosting:latest
+        docker build -t mohd1995/testing:latest .
+        docker push mohd1995/testing:latest
