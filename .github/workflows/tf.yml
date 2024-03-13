@@ -1,23 +1,18 @@
-permissions: write-all
-
-name: tfsec-pr-commenter
+name: tfsec
 on:
+  push:
+    branches:
+      - main
   pull_request:
-
 jobs:
   tfsec:
-    name: tfsec PR commenter
+    name: tfsec
     runs-on: ubuntu-latest
 
-    permissions:
-      contents: read
-      pull-requests: write
-
     steps:
-      - name: Clone repox
+      - name: Clone repo
         uses: actions/checkout@master
       - name: tfsec
-        uses: aquasecurity/tfsec-pr-commenter-action@v1.2.0
+        uses: aquasecurity/tfsec-action@v1.0.0
         with:
-          github_token: ${{ github.token }}
-          working_directory: ./infrastructure
+          working-directory: ./infrastructure 
