@@ -1,3 +1,12 @@
+permissions: write-all
+
+name: TFSec Scan And Report
+on:
+  push:
+    branches:
+      - main
+  pull_request:  
+
 jobs:
   tfsec:
     name: Run tfsec sarif report
@@ -21,14 +30,17 @@ jobs:
       - name: Sync S3 Bucket
         run: aws s3 sync s3://git-mo-aws/tfsec ./infrastructure
 
+      - name: Install tfsec
+        run: |
+          wget https://github.com/aquasecurity/tfsec/releases/download/v1.28.5/tfsec-linux-amd64
+          chmod +x tfsec-linux-amd64
+          sudo mv tfsec-linux-amd64 /usr/local/bin/tfsec
+
       - name: Run tfsec
-        uses: aquasecurity/tfsec-sarif-action@21ded20e8ca120cd9d3d6ab04ef746477542a608
-        with:
-          sarif_file: ./infrastructure/tfsec.sarif
-          working-directory: ./infrastructure
-          soft_fail_commenter: true # Allows the workflow to continue even if tfsec finds issues
+        run: tfsec ./infrastructure --out=tfsec-results.sarif --format=sarif
+        continue-on-error: true # Proceed even if tfsec finds issues
 
       - name: Upload SARIF file to GitHub
         uses: github/codeql-action/upload-sarif@v2
         with:
-          sarif_file: ./infrastructure/tfsec.sarif
+          sarif_file: tfsec-results.sarif
