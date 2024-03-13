@@ -1,72 +1,25 @@
-permissions: write-all
-
-name: 'Build and Deploy with Pre-Deployment Security Scan'
-
+name: tfsec
 on:
   push:
     branches:
       - main
   pull_request:
-
 jobs:
-  build-and-deploy:
-    name: 'Build, Security Scan, and Deploy Terraform Infrastructure'
-    runs-on: ubuntu-20.04
+  tfsec:
+    name: tfsec sarif report
+    runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+      - name: Clone repo
+        uses: actions/checkout@master
 
-      - name: Install Trivy
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y wget apt-transport-https gnupg lsb-release
-          wget -qO - https://aquasecurity.github.io/trivy-repo/deb/public.key | sudo apt-key add -
-          echo deb https://aquasecurity.github.io/trivy-repo/deb $(lsb_release -sc) main | sudo tee -a /etc/apt/sources.list.d/trivy.list
-          sudo apt-get update
-          sudo apt-get install trivy
-      - name: Run Trivy vulnerability scanner on filesystem and save output
-        run: |
-          trivy filesystem . > trivy-results.log
-      
-      - name: Run Trivy Vulnerability scanner in fs mode
-        uses: aquasecurity/trivy-action@master
+      - name: tfsec
+        uses: tfsec/tfsec-sarif-action@main
         with:
-          scan-type: 'fs'
-          scan-ref: '.'
-          trivy-config: tf.yml
+          sarif_file: tfsec.sarif         
 
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v1
+      - name: Upload SARIF file
+        uses: github/codeql-action/upload-sarif@v1
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: eu-west-2
-      
-      - name: Upload Trivy scan results to S3
-        run: |
-          aws s3 cp trivy-results.log s3://git-mo-aws/trivy-${{ github.run_id }}.json --debug
-      
-      - name: Set up Terraform
-        uses: hashicorp/setup-terraform@v1
-        with:
-          terraform_version: 1.6.2
-
-      - name: Terraform Init
-        run: terraform init
-        working-directory: ./infrastructure
-
-      - name: Terraform Validate
-        run: terraform validate
-        working-directory: ./infrastructure
-
-      - name: Terraform Apply
-        run: terraform apply -auto-approve
-        working-directory: ./infrastructure
-
-      - name: Wait for 3 Minutes
-        run: sleep 180
-
-      - name: Terraform Destroy
-        run: terraform destroy -auto-approve
-        working-directory: ./infrastructure
+          working-directory: ./infrastructure
+          sarif_file: tfsec.sarif    
