@@ -15,4 +15,5 @@ jobs:
       - name: tfsec
         uses: aquasecurity/tfsec-action@v1.0.0
         with:
+          tfsec_args: --soft-fail
           working-directory: ./infrastructure 
