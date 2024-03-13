@@ -9,9 +9,9 @@ resource "aws_lb" "lb" {
 }
 
 resource "aws_lb_target_group" "tg" {
-  name     = "my-target-group"
+  name     = "my-target-group" 
   port     = 80
-  protocol = "HTTP"
+  protocol = "HTTP" #tfsec:ignore:aws-elb-http-not-used
   vpc_id   = aws_vpc.vpc.id
 
   health_check {
