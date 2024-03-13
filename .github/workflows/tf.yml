@@ -1,19 +1,27 @@
-name: tfsec-pr-commenter
+name: tests
+
 on:
   pull_request:
-jobs:
-  tfsec:
-    name: tfsec PR commenter
-    runs-on: ubuntu-latest
+    paths-ignore:
+      - '*.md'
+  schedule:
+    - cron:  0 23 * * *
 
-    permissions:
-      contents: read
-      pull-requests: write
+jobs:
+  build:
+    name: Run Go tests
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ macos-latest, windows-latest, ubuntu-latest ]
 
     steps:
-      - name: Clone repo
-        uses: actions/checkout@master
-      - name: tfsec
-        uses: aquasecurity/tfsec-pr-commenter-action@v1.2.0
-        with:
-          github_token: ${{ github.token }}
+    - uses: actions/checkout@v3
+
+    - uses: actions/setup-go@v3
+      with:
+        go-version-file: go.mod
+        cache: true
+        cache-dependency-path: go.sum
+
+    - run: make test
