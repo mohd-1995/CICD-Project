@@ -1,20 +1,34 @@
-
-name: tfsec
-on:
-  push:
-    branches:
-      - main
-  pull_request:
 jobs:
   tfsec:
-    name: tfsec
+    name: Run tfsec sarif report
     runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
 
     steps:
       - name: Clone repo
-        uses: actions/checkout@master
-      - name: tfsec
-        uses: aquasecurity/tfsec-action@v1.0.0
+        uses: actions/checkout@v3
+
+      - name: Set up AWS CLI
+        uses: aws-actions/configure-aws-credentials@v1
         with:
-          tfsec_args: --soft-fail
-          working-directory: ./infrastructure 
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: eu-west-2
+
+      - name: Sync S3 Bucket
+        run: aws s3 sync s3://git-mo-aws/tfsec ./infrastructure
+
+      - name: Run tfsec
+        uses: aquasecurity/tfsec-sarif-action@21ded20e8ca120cd9d3d6ab04ef746477542a608
+        with:
+          sarif_file: ./infrastructure/tfsec.sarif
+          working-directory: ./infrastructure
+          soft_fail_commenter: true # Allows the workflow to continue even if tfsec finds issues
+
+      - name: Upload SARIF file to GitHub
+        uses: github/codeql-action/upload-sarif@v2
+        with:
+          sarif_file: ./infrastructure/tfsec.sarif
