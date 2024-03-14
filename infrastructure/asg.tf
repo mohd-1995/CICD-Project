@@ -12,7 +12,7 @@ resource "aws_launch_configuration" "web" {
 }
 
 resource "aws_autoscaling_group" "web" {
-  name = "${aws_launch_configuration.web.name}-asg"
+  name_prefix = "asg-tf-"
   launch_configuration = aws_launch_configuration.web.id
   vpc_zone_identifier  = [ aws_subnet.s1.id, aws_subnet.s2.id ]
   min_size             = 1
