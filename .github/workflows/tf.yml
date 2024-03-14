@@ -1,5 +1,3 @@
-permissions: write-all
-
 name: tfsec
 on:
   push:
@@ -7,29 +5,15 @@ on:
       - main
   pull_request:
 jobs:
-  tfsec_scan:
+  tfsec:
+    name: tfsec
     runs-on: ubuntu-latest
+
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
-
-    - name: Set up Python
-      uses: actions/setup-python@v2
-      with:
-        python-version: '3.x'
-
-    - name: Install AWS CLI
-      run: pip install awscli
-
-    - name: Run tfsec and save results
-      run: tfsec . --format=default --soft-fail > tfsec_results.txt
-
-    - name: Configure AWS Credentials
-      uses: aws-actions/configure-aws-credentials@v1
-      with:
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: eu-west-2
-
-    - name: Upload tfsec results to S3
-      run: aws s3 cp tfsec_results.txt s3://git-mo-aws/tfsec/tfsec_results.txt
+      - name: Clone repo
+        uses: actions/checkout@master
+      - name: tfsec
+        uses: aquasecurity/tfsec-action@v1.0.0
+        with:
+          working-directory: ./infrastructure
+          soft_fail: true
