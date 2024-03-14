@@ -67,6 +67,10 @@ resource "aws_route_table_association" "rt2" {
 ### vpc logs
 resource "aws_cloudwatch_log_group" "vpc" {
   name = "/aws/vpc/flow-logs"
+
+  lifecycle {
+    create_before_destroy = true
+  }
 }
 
 resource "aws_flow_log" "vpc_flow" {
@@ -74,6 +78,10 @@ resource "aws_flow_log" "vpc_flow" {
   log_destination = aws_cloudwatch_log_group.vpc.arn
   traffic_type    = "ALL"
   vpc_id          = aws_vpc.vpc.id
+
+  lifecycle {
+    create_before_destroy = true
+  }
 }
 
 
