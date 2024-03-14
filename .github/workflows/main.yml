@@ -88,9 +88,9 @@ jobs:
         run: terraform apply -auto-approve
         working-directory: ./infrastructure
 
-      - name: Wait for 3 Minutes
-        run: sleep 180
+      #- name: Wait for 3 Minutes
+      #  run: sleep 180
 
-      - name: Terraform Destroy
-        run: terraform destroy -auto-approve
-        working-directory: ./infrastructure
+      #- name: Terraform Destroy
+      #  run: terraform destroy -auto-approve
+      #  working-directory: ./infrastructure
