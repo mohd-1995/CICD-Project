@@ -6,6 +6,10 @@ resource "aws_lb" "lb" {
   subnets                          = [aws_subnet.s1.id, aws_subnet.s2.id]
   enable_cross_zone_load_balancing = true
   ip_address_type                  = "ipv4"
+
+  lifecycle {
+    create_before_destroy = true
+  }
 }
 
 resource "aws_lb_target_group" "tg" {
@@ -13,6 +17,10 @@ resource "aws_lb_target_group" "tg" {
   port     = 80
   protocol = "HTTP" #tfsec:ignore:aws-elb-http-not-used
   vpc_id   = aws_vpc.vpc.id
+
+  lifecycle {
+    create_before_destroy = true
+  }
 
   health_check {
     enabled             = true

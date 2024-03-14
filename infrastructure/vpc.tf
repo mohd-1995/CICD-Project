@@ -92,6 +92,10 @@ resource "aws_iam_role" "vpc_flow_logs_role" {
       },
     ]
   })
+
+  lifecycle {
+    create_before_destroy = true
+  }
 }
 
 resource "aws_iam_role_policy" "vpc_flow_logs_policy" {
