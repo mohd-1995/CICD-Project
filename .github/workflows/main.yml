@@ -6,10 +6,9 @@ on:
   push:
     branches:
       - main
-  pull_request:
 
 jobs:
-  build-and-deploy:
+  deploy-infrastructure:
     name: 'Build, Security Scan, tfsec Analysis, and Deploy Terraform Infrastructure'
     runs-on: ubuntu-20.04
 
@@ -91,10 +90,3 @@ jobs:
       - name: Terraform Apply
         run: terraform apply -auto-approve
         working-directory: ./infrastructure
-
-      #- name: Wait for 3 Minutes
-      #  run: sleep 180
-
-      #- name: Terraform Destroy
-      #  run: terraform destroy -auto-approve
-      #  working-directory: ./infrastructure
