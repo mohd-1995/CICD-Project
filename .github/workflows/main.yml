@@ -67,7 +67,7 @@ jobs:
       - name: Run tfsec and capture output
         run: |
           mkdir -p ./results
-          tfsec ./terraform --soft-fail > ./results/results.txt
+          tfsec ./infrastructure --soft-fail > ./results/results.txt
 
       - name: Install AWS CLI
         run: sudo apt-get install awscli
