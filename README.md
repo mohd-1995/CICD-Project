@@ -17,5 +17,4 @@ inside CICD-Project
 |-- src                       # Source code for your application
 |-- tests                     # Tests for your application
 |-- Dockerfile                # Dockerfile to build your application container
-|-- sonar-project.properties  # Configuration for SonarQube analysis
 `-- README.md                 # Documentation of your project

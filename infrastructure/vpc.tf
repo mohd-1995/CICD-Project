@@ -108,6 +108,9 @@ resource "aws_iam_role" "vpc_flow_logs_role" {
 
 resource "aws_iam_role_policy" "vpc_flow_logs_policy" {
   name = "vpc_flow_logs_policy"
+
+
+  
   role = aws_iam_role.vpc_flow_logs_role.id
   policy = jsonencode({
     Version = "2012-10-17"
