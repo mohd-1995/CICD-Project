@@ -99,3 +99,8 @@ jobs:
       - name: Terraform Apply
         run: terraform apply -auto-approve
         working-directory: ./infrastructure
+      
+
+      - name: Terraform Destroy
+        run: terraforrm destroy -auto-approve
+        working-directory: ./infrastructure
