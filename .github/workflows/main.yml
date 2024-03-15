@@ -1,4 +1,4 @@
-name: 'Build and Deploy with Pre-Deployment Security Scan and tfsec Analysis'
+name: Build, Push Docker Image, and Deploy with Pre-Deployment Security Scan and tfsec Analysis
 
 on:
   push:
@@ -6,13 +6,29 @@ on:
       - main
 
 jobs:
-  deploy-infrastructure:
-    name: 'Build, Security Scan, tfsec Analysis, and Deploy Terraform Infrastructure'
-    runs-on: ubuntu-20.04
+  build-and-push-docker:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the code
+        uses: actions/checkout@v3
 
+      - name: Log in to Docker Hub
+        run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+
+      - name: Build and push Docker image
+        run: |
+          docker build -t mohd1995/testing:latest .
+          docker push mohd1995/testing:latest
+
+  deploy-infrastructure:
+    needs: build-and-push-docker
+    runs-on: ubuntu-20.04
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
+
+      - name: Pull Latest Docker Image
+        run: docker pull mohd1995/testing:latest
 
       - name: Install Trivy
         run: |
@@ -44,7 +60,7 @@ jobs:
       - name: Upload Trivy scan results to S3
         run: |
           aws s3 cp trivy-results.log s3://git-mo-aws/trivy-${{ github.run_id }}.json --debug
-      
+
       - name: Set up Terraform
         uses: hashicorp/setup-terraform@v1
         with:
@@ -73,10 +89,6 @@ jobs:
         run: sudo apt-get install awscli
 
       - name: Upload tfsec results to S3
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_DEFAULT_REGION: 'eu-west-2' 
         run: |
           aws s3 cp ./results/results.txt s3://git-mo-aws/tfsec-results-${{ github.run_id }}.txt
 
