@@ -14,5 +14,9 @@ sudo usermod -a -G docker ec2-user
 sudo systemctl enable docker
 
 # Pull the Docker image from Docker Hub and run the Docker container
-sudo docker pull mohd1995/webhosting:latest
-sudo docker run -d -p 80:80 --name webhosting mohd1995/webhosting:latest
+sudo docker pull mohd1995/testing:latest
+sudo docker run -d -p 80:80 --name testing mohd1995/testing:latest
+
+# Setup a cron job to check for new Docker image daily and update the container
+(crontab -l 2>/dev/null; echo "0 2 * * * /usr/bin/docker pull mohd1995/testing:latest && /usr/bin/docker container rm -f testing && /usr/bin/docker run -d -p 80:80 --name testing mohd1995/testing:latest") | crontab -
+
