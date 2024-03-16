@@ -12,13 +12,46 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Check out the code
-      uses: actions/checkout@v2
+      - name: Check out the code
+        uses: actions/checkout@v2
 
-    - name: Log in to Docker Hub
-      run: docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+      - name: Log in to Docker Hub
+        run: docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
 
-    - name: Build and push Docker image
-      run: |
-        docker build -t mohd1995/webhosting:latest .
-        docker push mohd1995/webhosting:latest
+      - name: Build and push Docker image
+        run: |
+          docker build -t mohd1995/testing:latest .
+          docker push mohd1995/testing:latest
+        
+      - name: Set UP Terraform 
+        uses: hashicorp/setup-terraform@v1
+        with:
+          terraform_version: 1.6.2
+    
+      - name: Terraform Init
+        run: terraform init
+        working-directory: ./infrastructure
+
+      - name: Terraform Validate
+        run: terraform validate
+        working-directory: ./infrastructure
+
+      - name: Terraform Plan
+        run: terraform plan
+        working-directory: ./infrastructure
+
+      - name: Terraform Apply
+        run: terraform apply -auto-approve
+        working-directory: ./infrastructure
+
+      - name: Get Instance IDs from ASG
+        id: get-instance-ids
+        run: |
+            INSTANCE_IDS=$(aws autoscaling describe-auto-scaling-groups --auto-scaling-group-names ${{ steps.terraform-outputs.outputs.auto_scaling_group_name }} --query "AutoScalingGroups[0].Instances[*].InstanceId" --output text)
+            echo "INSTANCE_IDS=$INSTANCE_IDS" >> $GITHUB_ENV
+      
+      - name: Get Public IPs from Instance IDs
+        run: |
+            for ID in $INSTANCE_IDS; do
+              aws ec2 describe-instances --instance-ids $ID --query "Reservations[*].Instances[*].PublicIpAddress" --output text
+            done

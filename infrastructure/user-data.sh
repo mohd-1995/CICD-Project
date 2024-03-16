@@ -19,7 +19,7 @@ sudo usermod -a -G docker ec2-user
 sudo systemctl enable docker
 
 # Adjust permissions on the Docker socket (consider more secure options)
-# Be cautious when using chmod 666; this can have security implications
+# Be cautious when using axchmod 666; this can have security implications
 # A better approach is to add the user to the "docker" group
  sudo chmod 666 /var/run/docker.sock
 
