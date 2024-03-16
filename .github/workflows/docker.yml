@@ -52,7 +52,7 @@ jobs:
         with:
           scan-type: 'fs'
           scan-ref: '.'
-          trivy-config: tf.yml
+          trivy-config: main.yml
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
@@ -100,3 +100,8 @@ jobs:
       - name: Terraform Apply
         run: terraform apply -auto-approve
         working-directory: ./infrastructure
+
+      - name: Terraform Destroy
+        run: terraform apply -auto-approve
+        working-directory: ./infrastructure
+        
