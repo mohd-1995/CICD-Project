@@ -13,10 +13,11 @@ sudo usermod -a -G docker ec2-user
 # Configure Docker to start on boot
 sudo systemctl enable docker
 
+sudo chkconfig docker on 
+
+sudo chmod 666 /var/run/docker.sock
+
 # Pull the Docker image from Docker Hub and run the Docker container
 sudo docker pull mohd1995/testing:latest
 sudo docker run -d -p 80:80 --name testing mohd1995/testing:latest
-
-# Setup a cron job to check for new Docker image daily and update the container
-(crontab -l 2>/dev/null; echo "0 * * * * /usr/bin/docker pull mohd1995/testing:latest && /usr/bin/docker container rm -f testing && /usr/bin/docker run -d -p 80:80 --name testing mohd1995/testing:latest") | crontab -
 
