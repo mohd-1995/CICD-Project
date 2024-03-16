@@ -37,5 +37,5 @@ EOF
 # Make the script executable
 chmod +x /home/ec2-user/update_docker.sh
 
-# Run the update script immediately to start the container
+# Run the update script imediately to start the container
 /home/ec2-user/update_docker.sh
