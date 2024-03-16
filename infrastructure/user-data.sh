@@ -7,33 +7,35 @@ sudo yum install -y docker
 # Start the Docker service
 sudo systemctl start docker
 
-# Wait for the Docker daemon to be active
-while ! docker info > /dev/null 2>&1; do
-   sleep 1
-done
+# Enable the Docker service to start on boot
+sudo systemctl enable docker
 
 # Add the ec2-user to the Docker group
 sudo usermod -a -G docker ec2-user
 
-# Configure Docker to start on boot
-sudo systemctl enable docker
+# Configure the cron job
+(crontab -l 2>/dev/null; echo "*/5 * * * * /home/ec2-user/update_docker.sh") | crontab -
 
-# Adjust permissions on the Docker socket (consider more secure options)
-# Be cautious when using chmod 666; this can have security implications
-# A better approach is to add the user to the "docker" group
- sudo chmod 666 /var/run/docker.sock
+# Create the update_docker.sh script
+cat <<'EOF' >/home/ec2-user/update_docker.sh
+#!/bin/bash
+IMAGE="mohd1995/testing:latest"
 
-# Stop all running containers (if any)
-sudo docker stop $(sudo docker ps -q)
+# Pull the latest version of the image
+docker pull $IMAGE
 
-# Remove all stopped containers (if any)
-sudo docker rm $(sudo docker ps -a -q)
+# Stop the running container
+docker stop website-container || true
 
-# Remove the existing Docker image (if it exists)
-sudo docker rmi mohd1995/testing
+# Remove the stopped container
+docker rm website-container || true
 
-# Pull the Docker image from Docker Hub
-sudo docker pull mohd1995/testing
+# Run the new container
+docker run -d -p 80:80 --name website-container $IMAGE
+EOF
 
-# Run the Docker container with the latest image
-sudo docker run -d -p 80:80 mohd1995/testing:latest  
+# Make the script executable
+chmod +x /home/ec2-user/update_docker.sh
+
+# Run the update script immediately to start the container
+/home/ec2-user/update_docker.sh

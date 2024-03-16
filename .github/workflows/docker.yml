@@ -93,6 +93,7 @@ jobs:
       - name: Upload tfsec results to S3
         run: |
           aws s3 cp ./results/results.txt s3://git-mo-aws/tfsec-results-${{ github.run_id }}.txt
+
       - name: Terraform Plan
         run: terraform plan
         working-directory: ./infrastructure
@@ -101,7 +102,6 @@ jobs:
         run: terraform apply -auto-approve
         working-directory: ./infrastructure
 
-      - name: Terraform Destroy
-        run: terraform apply -auto-approve
-        working-directory: ./infrastructure
-        
+      #- name: Terraform Destroy
+        #run: terraform apply -auto-approve
+        #working-directory: ./infrastructure
