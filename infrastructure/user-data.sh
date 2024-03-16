@@ -1,8 +1,5 @@
 #!/bin/bash
 
-# Redirect stdout and stderr to a log file for troubleshooting
-exec > /var/log/user-data.log 2>&1
-
 # Update the operating system and install Docker
 sudo yum update -y
 sudo yum install -y docker
@@ -10,26 +7,33 @@ sudo yum install -y docker
 # Start the Docker service
 sudo systemctl start docker
 
-# Add the ec2-user to the Docker group to run Docker without sudo
-# Note: You may need to log out and log back in for this to take effect, but since this is user data, we proceed
+# Wait for the Docker daemon to be active
+while ! docker info > /dev/null 2>&1; do
+   sleep 1
+done
+
+# Add the ec2-user to the Docker group
 sudo usermod -a -G docker ec2-user
 
 # Configure Docker to start on boot
 sudo systemctl enable docker
 
-# Wait for Docker service to be fully up and running
-until sudo docker info; do
-  echo "Waiting for Docker to start..."
-  sleep 1
-done
+# Adjust permissions on the Docker socket (consider more secure options)
+# Be cautious when using chmod 666; this can have security implications
+# A better approach is to add the user to the "docker" group
+ sudo chmod 666 /var/run/docker.sock
 
-# Pull the Docker image from Docker Hub and run the Docker container
-sudo docker pull mohd1995/testing:latest
-sudo docker run -d -p 80:80 --name testing mohd1995/testing:latest
+# Stop all running containers (if any)
+sudo docker stop $(sudo docker ps -q)
 
-# Setup a cron job to check for new Docker image every 5 minutes and update the container
-(crontab -l 2>/dev/null; echo "*/5 * * * * /usr/bin/docker pull mohd1995/testing:latest && /usr/bin/docker container rm -f testing && /usr/bin/docker run -d -p 80:80 --name testing mohd1995/testing:latest") | crontab -
+# Remove all stopped containers (if any)
+sudo docker rm $(sudo docker ps -a -q)
 
-# Ensure the cron service is running
-sudo systemctl enable crond.service
-sudo systemctl start crond.service
+# Remove the existing Docker image (if it exists)
+sudo docker rmi mohd1995/testing
+
+# Pull the Docker image from Docker Hub
+sudo docker pull mohd1995/testing
+
+# Run the Docker container with the latest image
+sudo docker run -d -p 80:80 mohd1995/testing:latest  
