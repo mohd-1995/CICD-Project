@@ -1,39 +1,47 @@
 #!/bin/bash
 
 # Update the operating system and install Docker
-sudo yum update -y
-sudo yum install -y docker
+yum update -y
+yum install -y docker
 
 # Start the Docker service
-sudo systemctl start docker
+systemctl start docker
+
+# Ensure the Docker service starts on boot
+systemctl enable docker
+
+# Add the ec2-user to the Docker group
+usermod -a -G docker ec2-user
+
+# Adjust permissions on the Docker socket
+chmod 666 /var/run/docker.sock
 
 # Wait for the Docker daemon to be active
 while ! docker info > /dev/null 2>&1; do
    sleep 1
 done
 
-# Add the ec2-user to the Docker group
-sudo usermod -a -G docker ec2-user
+# Create the update script in /tmp
+cat <<'EOF' > /tmp/update_docker_image.sh
+#!/bin/bash
+# Stop the currently running container
+docker stop my-container
 
-# Configure Docker to start on boot
-sudo systemctl enable docker
+# Remove the stopped container
+docker rm my-container
 
-# Adjust permissions on the Docker socket (consider more secure options)
-# Be cautious when using axchmod 666; this can have security implications
-# A better approach is to add the user to the "docker" group
- sudo chmod 666 /var/run/docker.sock
-
-# Stop all running containers (if any)
-sudo docker stop $(sudo docker ps -q)
-
-# Remove all stopped containers (if any)
-sudo docker rm $(sudo docker ps -a -q)
-
-# Remove the existing Docker image (if it exists)
-sudo docker rmi mohd1995/testing
-
-# Pull the Docker image from Docker Hub
-sudo docker pull mohd1995/testing
+# Pull the latest Docker image
+docker pull mohd1995/testing:latest
 
 # Run the Docker container with the latest image
-sudo docker run -d -p 80:80 mohd1995/testing:latest  
+docker run -d --name my-container -p 80:80 mohd1995/testing:latest
+EOF
+
+# Ensure the script is executable
+chmod +x /tmp/update_docker_image.sh
+
+# Add a cron job to run the script every 5 minutes
+( crontab -l 2>/dev/null; echo "*/5 * * * * /bin/bash /tmp/update_docker_image.sh >> /var/log/update_docker_image.log 2>&1" ) | crontab -
+
+# Start the initial Docker container manually
+/tmp/update_docker_image.sh
