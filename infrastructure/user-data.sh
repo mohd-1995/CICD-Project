@@ -49,7 +49,7 @@ sudo systemctl enable crond
 sudo systemctl start crond
 
 # Add a cron job to run the script every 5 minutes
-#( crontab -l 2>/dev/null; echo "*/5 * * * * /bin/bash /tmp/update_docker_image.sh >> /var/log/update_docker_image.log 2>&1" ) | crontab -
+( crontab -l 2>/dev/null; echo "*/5 * * * * /bin/bash /tmp/update_docker_image.sh >> /var/log/update_docker_image.log 2>&1" ) | crontab -
 
 # Start the initial Docker container manually
 /tmp/update_docker_image.sh
