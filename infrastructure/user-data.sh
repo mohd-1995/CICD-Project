@@ -49,16 +49,18 @@ sudo systemctl enable crond
 sudo systemctl start crond
 
 # Add a cron job to run the script every 5 minutes
-( crontab -l 2>/dev/null; echo "*/5 * * * * /bin/bash /tmp/update_docker_image.sh >> /var/log/update_docker_image.log 2>&1" ) | crontab -
+( crontab -l 2>/dev/null; echo "*/2 * * * * /bin/bash /tmp/update_docker_image.sh >> /var/log/update_docker_image.log 2>&1" ) | crontab -
 
 # Start the initial Docker container manually
 /tmp/update_docker_image.sh
 
-if /tmp/update_docker_image.sh; then
-  aws sns publish --topic-arn "arn:aws:sns:eu-west-2:915228257337:docker-pull-complete-notification" --message "Docker image pull completed successfully on $(date)."
-else
-  aws sns publish --topic-arn "arn:aws:sns:eu-west-2:915228257337:docker-pull-complete-notification" --message "Docker image pulled FAILED on $(date)."
-fi
 
-   
+ # Attempt to update the Docker image
+if /tmp/update_docker_image.sh; then
+# Publish success message to SNS topic
+  aws sns publish --topic-arn arn:aws:sns:eu-west-2:915228257337:docker-pull-notification --message "Docker image pull completed successfully on $(date)."
+else
+  # Publish failure message to SNS topic
+  aws sns publish --topic-arn arn:aws:sns:eu-west-2:915228257337:docker-pull-notification --message "Docker image pull FAILED on $(date)."
+fi   
   
