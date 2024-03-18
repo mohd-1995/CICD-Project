@@ -44,7 +44,7 @@ resource "aws_iam_policy" "sns-policy" {
           "ssm:Publish"
         ],
         Effect   = "Allow",
-        Resource = "*" // Consider specifying the ARN of the SNS topic for better security
+        Resource = "arn:aws:sns:eu-west-2:915228257337:docker-pull-notification"
       },
     ]
   })
