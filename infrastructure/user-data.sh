@@ -28,6 +28,7 @@ done
 # Create the update script in /tmp
 cat <<'EOF' > /tmp/update_docker_image.sh
 #!/bin/bash
+PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 # Stop the currently running container
 docker stop my-container
 
