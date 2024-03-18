@@ -55,9 +55,10 @@ sudo systemctl start crond
 /tmp/update_docker_image.sh
 
 if /tmp/update_docker_image.sh; then
-  aws sns publish --topic-arn "${aws_sns_topic.topic.arn}" --message "Docker image pulled completed successfully on \$(date)."
+  aws sns publish --topic-arn "arn:aws:sns:eu-west-2:915228257337:docker-pull-complete-notification" --message "Docker image pull completed successfully on $(date)."
 else
-  aws sns publish --topic-arn "${aws_sns_topic.topic.arn}" --message "Docker image pulled FAILED on \$(date)."
+  aws sns publish --topic-arn "arn:aws:sns:eu-west-2:915228257337:docker-pull-complete-notification" --message "Docker image pulled FAILED on $(date)."
 fi
+
    
   

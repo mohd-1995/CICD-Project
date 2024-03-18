@@ -6,6 +6,11 @@ resource "aws_sns_topic" "topic" {
   }
 }
 
+
+output "topic-arn" {
+  value = aws_sns_topic.topic.arn
+}
+
 resource "aws_sns_topic_subscription" "email" {
   topic_arn = aws_sns_topic.topic.arn
   protocol = "email"

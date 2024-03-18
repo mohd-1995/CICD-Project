@@ -4,7 +4,9 @@ resource "aws_launch_configuration" "web" {
   instance_type = "t2.micro"
   security_groups = [aws_security_group.ec2.id]
   key_name = "new-2024"
-  user_data = file("user-data.sh")
+  user_data = templatefile("user-data.sh.tpl", {
+    sns-topic-arn = aws_sns_topic.topic.arn
+  })
   
   lifecycle {
     create_before_destroy = true
