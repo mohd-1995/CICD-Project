@@ -56,7 +56,7 @@ sudo systemctl start crond
 /tmp/update_docker_image.sh
 
 
- # Attempt to update the Docker image
+# Attempt to update the Docker image
 if /tmp/update_docker_image.sh; then
 # Publish success message to SNS topic
   aws sns publish --topic-arn arn:aws:sns:eu-west-2:915228257337:docker-pull-notification --message "Docker image pull completed successfully on $(date)."
