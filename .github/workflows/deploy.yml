@@ -5,8 +5,7 @@ name: Build, Push Docker Image, and Deploy with Pre-Deployment Security Scan and
 on:
   push:
     branches:
-      - dev
-      - deploy
+      - main
 
 jobs:
   build-and-push-docker:
@@ -46,10 +45,6 @@ jobs:
       - name: Terraform Init
         run: terraform init
         working-directory: ./infrastructure
-
-      - name: Terraform Validate
-        run: terraform validate
-        working-directory: ./infrastructure
     
       - name: Terraform Plan
         run: terraform plan
@@ -62,4 +57,3 @@ jobs:
       - name: Terraforrm Destroy 
         run: terraform destroy -auto-approve
         working-directory: ./infrastructure
-
