@@ -1,20 +1,9 @@
-# CICD-Project
-This repository is used to store code to launch my portfolio website using AWS infrastructure 
+ALL testing is done here!!!
 
-a
 
-#my-directory
-inside CICD-Project
-|-- .github
-|   `-- workflows
-|       `-- main.yml          # GitHub Actions workflow definition
-|-- infrastructure
-        |--terraform 
-            |-- .terraform.lock.hcl
-|       |-- main.tf           # Terraform configuration for AWS infrastructure
-|       |-- variables.tf      # Terraform variable definitions
-|       `-- outputs.tf        # Terraform output definitions
-|-- src                       # Source code for your application
-|-- tests                     # Tests for your application
-|-- Dockerfile                # Dockerfile to build your application container
-`-- README.md                 # Documentation of your project
+things to complete:
+- docker image scan
+- docker container scan 
+- two branches , develop and deploy
+- generate an artefact
+- manual approval
