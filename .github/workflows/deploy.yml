@@ -26,38 +26,15 @@ jobs:
             tags: mohd1995/testing:latest
       
 
-      
-          
-  deploy-infrastructure:
-    needs: build-and-push-docker
-    runs-on: ubuntu-20.04
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: Pull Latest Docker Image
-        run: docker pull mohd1995/testing:latest
-
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v1
+      - name: Run Trivy Scanner for Docker Images/Containers
+        uses: aquasecurity/trivy-action@master
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: eu-west-2   
+          image-ref: 'docker.io/mohd1995/testing:$ {{ github.sha }}'
+          format: 'table'
+          exit-code: 1
+          ignore-unfixed: true
+          vuln-type: 'os, library'
+          severity: 'CRITICAL,HIGH'
 
-      - name: Terraform Init
-        run: terraform init
-        working-directory: ./infrastructure
-    
-      - name: Terraform Plan
-        run: terraform plan
-        working-directory: ./infrastructure
-
-      - name: Terraform Apply
-        run: terraform apply -auto-approve
-        working-directory: ./infrastructure
-      
-      -  name: Terraform Destroy
-         run: terraform destroy -auto-approve
-         working-directory: ./infrastructure
-
+          
+  
