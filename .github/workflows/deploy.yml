@@ -43,7 +43,7 @@ jobs:
       - name: Run Trivy Vulnerability Scanner
         uses: aquasecurity/trivy-action@master
         with:
-          image-ref: 'https://hub.docker.com/repository/docker/mohd1995/testing/general'
+          image-ref: 'mohd1995/testing:latest'
           format: table
           ignore-unfixed: true
           vuln-type: 'os,library'
