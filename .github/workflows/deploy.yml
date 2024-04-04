@@ -24,6 +24,9 @@ jobs:
             file: ./Dockerfile
             push: true
             tags: mohd1995/testing:latest
+      
+
+      
           
   deploy-infrastructure:
     needs: build-and-push-docker
@@ -57,3 +60,4 @@ jobs:
       -  name: Terraform Destroy
          run: terraform destroy -auto-approve
          working-directory: ./infrastructure
+
