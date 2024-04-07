@@ -57,3 +57,24 @@ jobs:
         vuln-type: 'os, library'
         severity: 'CRITICAL,HIGH'
   
+  config-scan:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+    
+    - name: Run Trivy vulnerability scanner in IaC mode
+      uses: aquasecurity/trivy-action@master
+      with:
+        scan-type: 'fs'
+        scanners: 'config'
+        scan-ref: './infrastructure'
+        hide-progress: false
+        format: 'table'
+        exit-code: '1'
+        ignore-unfixed: true
+        severity: 'CRTIICAL,HIGH'
+        trivy-config: trivy-fs.ml
+
+
+
