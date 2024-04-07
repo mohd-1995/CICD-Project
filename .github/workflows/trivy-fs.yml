@@ -35,7 +35,7 @@ jobs:
     - name: Run Trivy vulnerability scanner
       uses: aquasecurity/trivy-action@master
       with:
-        image-ref: 'mohd1995/your-image-name:latest'
+        image-ref: 'mohd1995/testing:latest'
         format: 'table'
         exit-code: '1'
         ignore-unfixed: true
