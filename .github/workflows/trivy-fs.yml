@@ -1,5 +1,3 @@
-permisssions: write-all
-
 name: Trivy Container Image Scan
 
 on:
