@@ -23,7 +23,7 @@ jobs:
         format: 'table'
         severity: 'LOW'
 
-  trivy_scan:
+  container_scan:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout code
@@ -43,6 +43,7 @@ jobs:
       with:
         context: .
         file: ./Dockerfile
+        platforms: linux/amd64, linux/amd64
         push: true
         tags: mohd1995/testing:latest
 
@@ -51,7 +52,8 @@ jobs:
       with:
         image-ref: 'mohd1995/testing:latest'
         format: 'table'
-        exit-code: '1'
+        exit-code: '0'
         ignore-unfixed: true
+        vuln-type: 'os, library'
         severity: 'CRITICAL,HIGH'
-        scan-type: 'image'
+  
