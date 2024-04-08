@@ -20,13 +20,13 @@ jobs:
         ignore-unfixed: true
         format: 'table'
         severity: 'LOW'
+        output: 'trivy-results.sarif'
     
-    - name: Upload filesystem scan results as an artifact
-      uses: actions/upload-artifact@v2
+    - name: Upload Trivy Scan results to Security Tab
+      uses: github/codeql-action/upload-sarif@v2
       with:
-        name: fs-scan-results
-        path: trivy-fs-results.table
-
+        sarif_file: 'trivy-results.sarif'
+    
   container_scan:
     runs-on: ubuntu-latest
     steps:
@@ -60,15 +60,11 @@ jobs:
         ignore-unfixed: true
         vuln-type: 'os, library'
         severity: 'CRITICAL,HIGH'
-
-    - name: Run Trivy vulnerability scanner and save results
-      run: trivy filesystem --format table --severity LOW . > trivy-fs-results.table
-
-    - name: Upload container scan results as an artifact
-      uses: actions/upload-artifact@v2
+    
+    - name: Upload Trivy Scan results to Security Tab
+      uses: github/codeql-action/upload-sarif@v2
       with:
-        name: container-scan-results
-        path: trivy-container-results.table
+        sarif_file: 'trivy-results.sarif'
 
   config-scan:
     runs-on: ubuntu-latest
@@ -88,9 +84,4 @@ jobs:
         ignore-unfixed: true
         severity: 'CRTIICAL,HIGH'
         trivy-config: trivy-fs.ml
-    
-    - name: Upload IaC scan results as an artifact
-      uses: actions/upload-artifact@v2
-      with:
-        name: iac-scan-results
-        path: trivy-config-results.table
+
