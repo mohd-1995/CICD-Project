@@ -73,7 +73,7 @@ jobs:
         scanners: 'config'
         scan-ref: './infrastructure'
         hide-progress: false
-        format: 'table'
+        format: 'sarif'
         output: 'trivy-results.sarif'
         exit-code: '1'
         ignore-unfixed: true
