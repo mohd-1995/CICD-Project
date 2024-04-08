@@ -60,11 +60,6 @@ jobs:
         ignore-unfixed: true
         vuln-type: 'os, library'
         severity: 'CRITICAL,HIGH'
-    
-    - name: Upload Trivy Scan results to Security Tab
-      uses: github/codeql-action/upload-sarif@v2
-      with:
-        sarif_file: 'trivy-results.sarif'
 
   config-scan:
     runs-on: ubuntu-latest
@@ -80,8 +75,13 @@ jobs:
         scan-ref: './infrastructure'
         hide-progress: false
         format: 'table'
+        output: 'trivy-results.sarif'
         exit-code: '1'
         ignore-unfixed: true
         severity: 'CRTIICAL,HIGH'
-        trivy-config: trivy-fs.ml
-
+        trivy-config: trivy-fs.yaml
+    
+    - name: Upload Trivy Scan results to Github Security Tab
+      uses: github/codeql-action/upload-sarif
+      with:
+        sarif_file: 'trivy-results.sarif'
