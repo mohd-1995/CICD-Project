@@ -24,6 +24,7 @@ jobs:
           ignore-unfixed: true
           format: 'table'
           severity: 'LOW'
+          exit-code: 0
 
   container_scan:
     runs-on: ubuntu-latest
