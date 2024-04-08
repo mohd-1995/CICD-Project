@@ -56,9 +56,11 @@ jobs:
         image-ref: 'mohd1995/testing:latest'
         format: 'table'
         exit-code: '0'
+        hide-progress: false
         ignore-unfixed: true
         vuln-type: 'os, library'
         severity: 'CRITICAL,HIGH'
+        trivy-config: trivy.yaml
 
   config-scan:
     runs-on: ubuntu-latest
