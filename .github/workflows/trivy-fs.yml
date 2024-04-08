@@ -60,7 +60,10 @@ jobs:
         ignore-unfixed: true
         vuln-type: 'os, library'
         severity: 'CRITICAL,HIGH'
-    
+
+    - name: Run Trivy vulnerability scanner and save results
+      run: trivy filesystem --format table --severity LOW . > trivy-fs-results.table
+
     - name: Upload container scan results as an artifact
       uses: actions/upload-artifact@v2
       with:
