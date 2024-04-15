@@ -91,6 +91,15 @@ jobs:
         run: terraform plan
         working-directory: ./infrastructure
     
+      - name: Clone repo
+        uses: actions/checkout@master
+      - name: tfsec
+        uses: aquasecurity/tfsec-action@v1.0.0
+        continue-on-error: false
+        with:
+          working_directory: ./infrastructure
+
+
       - name: Terraform Apply
         run: terraform apply -auto-approve
         working-directory: ./infrastructure
@@ -98,8 +107,3 @@ jobs:
       -  name: Terraform Destroy
          run: terraform destroy -auto-approve
          working-directory: ./infrastructure
-
-
-
-
-  
